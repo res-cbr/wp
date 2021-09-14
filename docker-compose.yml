@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  db:
+    image: mariadb
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql_root_pass
+      MYSQL_DATABASE: db_name
+      MYSQL_USER: user_name
+      MYSQL_PASSWORD: user_pass
+   
+    networks:
+      - common
+    restart: always
+    
+  wordpress:
+    image: wordpress:latest
+    
+    volumes:
+      - data:/var/www/html
+      
+    depends_on:
+      - db
+      
+    environment:
+      WORDPRESS_DB_HOST: db
+      MYSQL_ROOT_PASSWORD: mysql_root_pass
+      WORDPRESS_DB_NAME: db_name
+      WORDPRESS_DB_USER: user_name
+      WORDPRESS_DB_PASSWORD: user_pass
+      WORDPRESS_TABLE_PREFIX: wp_
+      
+      
+    networks:
+      - common
+      - default
+
+    ports:
+      - 80:80
+      
+volumes:
+  db_data:
+  data:
+  
+networks:
+  common:
+    internal: true
+
